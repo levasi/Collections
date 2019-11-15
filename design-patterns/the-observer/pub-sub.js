@@ -4,10 +4,10 @@
 * Licensed under the GPL
 */
 
-var pubsubz = {};
+const pubsub = {};
 (function (q) {
 
-    var topics = {},
+    let topics = {},
         subUid = -1;
 
     q.publish = function (topic, args) {
@@ -17,7 +17,7 @@ var pubsubz = {};
         }
 
         setTimeout(function () {
-            var subscribers = topics[topic],
+            let subscribers = topics[topic],
                 len = subscribers ? subscribers.length : 0;
 
             while (len--) {
@@ -35,7 +35,7 @@ var pubsubz = {};
             topics[topic] = [];
         }
 
-        var token = (++subUid).toString();
+        let token = (++subUid).toString();
         topics[topic].push({
             token: token,
             func: func
@@ -44,9 +44,9 @@ var pubsubz = {};
     };
 
     q.unsubscribe = function (token) {
-        for (var m in topics) {
+        for (let m in topics) {
             if (topics[m]) {
-                for (var i = 0, j = topics[m].length; i < j; i++) {
+                for (let i = 0, j = topics[m].length; i < j; i++) {
                     if (topics[m][i].token === token) {
                         topics[m].splice(i, 1);
                         return token;
@@ -56,23 +56,7 @@ var pubsubz = {};
         }
         return false;
     };
-}(pubsubz));
+}(pubsub));
 
-
-
-var testSubscriber = function (topics, data) {
-    console.log(topics + ": " + data);
-};
-
-var testSubscription = pubsubz.subscribe('example1', testSubscriber);
-
-pubsubz.publish('example1', 'hello world!');
-pubsubz.publish('example1', ['test', 'a', 'b', 'c']);
-pubsubz.publish('example1', [{ 'color': 'blue' }, { 'text': 'hello' }]);
-
-setTimeout(function () {
-    pubsubz.unsubscribe(testSubscription);
-}, 0);
-
-pubsubz.publish('example1', 'hello again!');
+module.exports = pubsub
 
