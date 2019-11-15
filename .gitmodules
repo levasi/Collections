@@ -1,0 +1,3 @@
+[submodule "js-design-patterns"]
+	path = js-design-patterns
+	url = https://github.com/levasi/js-design-patterns.git
