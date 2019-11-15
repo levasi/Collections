@@ -1,25 +1,48 @@
-var pubsub = {}; (function (q) {
-    vartopics = {}, subUid = -1;
-    // Publish or broadcast events of interest// with a specific topic name and arguments// such as the data to pass along
+/*!
+* Pub/Sub implementation
+* http://addyosmani.com/
+* Licensed under the GPL
+*/
+
+var pubsubz = {};
+(function (q) {
+
+    var topics = {},
+        subUid = -1;
+
     q.publish = function (topic, args) {
-        if (!topics[topic]) { returnfalse; } var subscribers = topics[topic], len = subscribers ? subscribers.length : 0;
-        while (len--) {
-            subscribers[len].func(topic, args);
+
+        if (!topics[topic]) {
+            return false;
         }
-        return this;
+
+        setTimeout(function () {
+            var subscribers = topics[topic],
+                len = subscribers ? subscribers.length : 0;
+
+            while (len--) {
+                subscribers[len].func(topic, args);
+            }
+        }, 0);
+
+        return true;
+
     };
-    // Subscribe to events of interest// with a specific topic name and a// callback function, to be executed// when the topic/event is observed
+
     q.subscribe = function (topic, func) {
+
         if (!topics[topic]) {
             topics[topic] = [];
         }
-        var token = (++subUid).toString()
+
+        var token = (++subUid).toString();
         topics[topic].push({
-            token: token, func: func
+            token: token,
+            func: func
         });
-        return token
+        return token;
     };
-    // Unsubscribe from a specific// topic, based on a tokenized reference// to the subscription
+
     q.unsubscribe = function (token) {
         for (var m in topics) {
             if (topics[m]) {
@@ -31,6 +54,25 @@ var pubsub = {}; (function (q) {
                 }
             }
         }
-        return this;
+        return false;
     };
-}(pubsub));
+}(pubsubz));
+
+
+
+var testSubscriber = function (topics, data) {
+    console.log(topics + ": " + data);
+};
+
+var testSubscription = pubsubz.subscribe('example1', testSubscriber);
+
+pubsubz.publish('example1', 'hello world!');
+pubsubz.publish('example1', ['test', 'a', 'b', 'c']);
+pubsubz.publish('example1', [{ 'color': 'blue' }, { 'text': 'hello' }]);
+
+setTimeout(function () {
+    pubsubz.unsubscribe(testSubscription);
+}, 0);
+
+pubsubz.publish('example1', 'hello again!');
+
