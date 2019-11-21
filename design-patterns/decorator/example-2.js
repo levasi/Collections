@@ -81,7 +81,9 @@ function addTodo(todoInstance) {
 }
 
 var Macbook = new Interface('Macbook', ['addEngraving', 'addParallels', 'add4GBRam', 'add8GBRam', 'addCase']);
+
 var MacbookPro = function () { }
+
 MacbookPro.prototype = {
     addEngraving: function () { },
     addParallels: function () { },
